@@ -3,17 +3,19 @@ class Heap
 		@heap = []
 		@lookupMap = {}
 		@comparisonFn = comparisonFn
-	push: (tuple) ->
-		@heap.push(tuple)
+	push: (id, value) ->
+		@heap.push([id, value])
 		index = @heap.length - 1
-		@lookupMap[tuple[0]] = index
+		@lookupMap[id] = index
 		@bubbleUp(index)
-		return tuple
+		return @heap
 	pop: ->
+		return undefined if @heap.length == 0
 		root = @heap[0]
 		last = @heap[@heap.length - 1]
 		@heap[0] = last
-		@heap.length = @heap.length - 1 # "slice" off the last spot in the heap
+		@heap.length = @heap.length - 1 #"slice" off the last spot in the heap
+		delete @lookupMap[root[0]] #remove id from lookup map
 		@bubbleDown(0)
 		return root
 
@@ -59,10 +61,17 @@ class Heap
 		@heap[index2] = node1
 		@lookupMap[node1Id] = index2
 
+	find: (id) ->
+		index = @lookupMap[id]
+		@heap[index]
+
 	update: (id, value) ->
 		index = @lookupMap[id]
 		@heap[index][1] = value
 		@bubbleUp(index)
 		@bubbleDown(index)
+
+	peek: ->
+		@heap[0]
 
 module.exports = Heap
